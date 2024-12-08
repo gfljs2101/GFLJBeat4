@@ -112,7 +112,7 @@ class e extends AudioWorkletProcessor {
             case "Cbrtmode":
                 this.getValues = (e, t) => (this.lastByteValue[t] = (Math.cbrt(e)) & 255) / 127.5 - 1;
                 break;
-            case "LogHack":
+            case "Log10mode":
                 this.getValues = (e, t) => (this.lastByteValue[t] = (Math.log10(e) * 32) & 255) / 127.5 - 1;
                 break;
             default:
