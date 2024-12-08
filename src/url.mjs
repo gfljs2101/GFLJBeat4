@@ -37,10 +37,10 @@ export function getCodeFromUrl(hash) {
 
 export function getUrlFromCode(code, mode, sampleRate) {
 	const codeArr = deflateRaw(code);
-	// First byte is mode, next 4 bytes is sampleRate, then the code
+	// First byte is mode, next 11 bytes is sampleRate, then the code
 	const outputArr = new Uint8Array(5 + codeArr.length);
 	outputArr[0] = mode2.indexOf(mode);
 	outputArr.set(new Uint8Array(new Float32Array([sampleRate]).buffer), 1);
 	outputArr.set(codeArr, 5);
-	window.location.hash = '4' + btoa(String.fromCharCode.apply(null, outputArr)).replaceAll('=', '');
+	window.location.hash = '11' + btoa(String.fromCharCode.apply(null, outputArr)).replaceAll('=', '');
 }
