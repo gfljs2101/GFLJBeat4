@@ -9,7 +9,7 @@ export function getCodeFromUrl(hash) {
 			songData = {
 				mode: [mode2][dataArr[0]],
 				sampleRate: new DataView(dataArr.buffer).getFloat32(1, 1),
-				code: inflateRaw(new Uint8Array(dataArr.buffer, 5), { to: 'string' })
+				code: inflateRaw(new Uint8Array(dataArr.buffer, 12), { to: 'string' })
 			};
 		} catch(err) {
 			console.error(`Couldn't load data from url: ${ err }`);
