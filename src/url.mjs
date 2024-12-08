@@ -8,7 +8,7 @@ export function getCodeFromUrl(hash) {
 			songData = {
 				mode: ['Bytebeat', 'Signed Bytebeat', 'Floatbeat', 'Funcbeat', 'Bitbeat', '2048', 'Logmode', 'LogHack', 'LogHack2', 'Cbrtmode', 'Log10mode'][dataArr[0]],
 				sampleRate: new DataView(dataArr.buffer).getFloat32(1, 1),
-				code: inflateRaw(new Uint8Array(dataArr.buffer, 12), { to: 'string' })
+				code: inflateRaw(new Uint8Array(dataArr.buffer, 5), { to: 'string' })
 			};
 		} catch(err) {
 			console.error(`Couldn't load data from url: ${ err }`);
@@ -37,9 +37,9 @@ export function getCodeFromUrl(hash) {
 export function getUrlFromCode(code, mode, sampleRate) {
 	const codeArr = deflateRaw(code);
 	// First byte is mode, next 11 bytes is sampleRate, then the code
-	const outputArr = new Uint8Array(12 + codeArr.length);
+	const outputArr = new Uint8Array(5 + codeArr.length);
 	outputArr[0] = ['Bytebeat', 'Signed Bytebeat', 'Floatbeat', 'Funcbeat', 'Bitbeat', '2048', 'Logmode', 'LogHack', 'LogHack2', 'Cbrtmode', 'Log10mode'].indexOf(mode);
 	outputArr.set(new Uint8Array(new Float32Array([sampleRate]).buffer), 1);
-	outputArr.set(codeArr, 12);
+	outputArr.set(codeArr, 5);
 	window.location.hash = '11' + btoa(String.fromCharCode.apply(null, outputArr)).replaceAll('=', '');
 }
