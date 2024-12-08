@@ -6,7 +6,7 @@ export function getCodeFromUrl(hash) {
 		const dataArr = Uint8Array.from(atob(hash.substring(2)), el => el.charCodeAt());
 		try {
 			songData = {
-				mode: ['Bytebeat', 'Signed Bytebeat', 'Floatbeat', 'Funcbeat', 'Logmode'][dataArr[0]],
+				mode: ['Bytebeat', 'Signed Bytebeat', 'Floatbeat', 'Funcbeat', 'Bitbeat', '2048', 'Logmode', 'LogHack', 'LogHack2', 'Cbrtmode', 'Log10mode'][dataArr[0]],
 				sampleRate: new DataView(dataArr.buffer).getFloat32(1, 1),
 				code: inflateRaw(new Uint8Array(dataArr.buffer, 5), { to: 'string' })
 			};
