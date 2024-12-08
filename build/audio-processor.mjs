@@ -94,7 +94,7 @@ class e extends AudioWorkletProcessor {
                     return this.lastByteValue[t] = Math.round(127.5 * (s + 1)), s
                 };
                 break;
-            case "Signed Bytebeat":
+            case "Logmode":
                 this.getValues = (e, t) => (this.lastByteValue[t] = log2(e) * 32 & 255) / 127.5 - 1;
                 break;
             default:
