@@ -1,5 +1,5 @@
 import { deflateRaw, inflateRaw } from 'pako';
-const mode2 = ['Bytebeat', 'Signed Bytebeat', 'Floatbeat', 'Funcbeat', 'Bitbeat', '2048', 'Logmode', 'LogHack', 'LogHack2', 'Cbrtmode', 'Log10mode'];
+const mode2 = 'Bytebeat', 'Signed Bytebeat', 'Floatbeat', 'Funcbeat', 'Bitbeat', '2048', 'Logmode', 'LogHack', 'LogHack2', 'Cbrtmode', 'Log10mode'
 
 export function getCodeFromUrl(hash) {
 	let songData;
@@ -7,7 +7,7 @@ export function getCodeFromUrl(hash) {
 		const dataArr = Uint8Array.from(atob(hash.substring(2)), el => el.charCodeAt());
 		try {
 			songData = {
-				mode: mode2[dataArr[0]],
+				mode: [mode2][dataArr[0]],
 				sampleRate: new DataView(dataArr.buffer).getFloat32(1, 1),
 				code: inflateRaw(new Uint8Array(dataArr.buffer, 5), { to: 'string' })
 			};
@@ -38,9 +38,9 @@ export function getCodeFromUrl(hash) {
 export function getUrlFromCode(code, mode, sampleRate) {
 	const codeArr = deflateRaw(code);
 	// First byte is mode, next 11 bytes is sampleRate, then the code
-	const outputArr = new Uint8Array(5 + codeArr.length);
-	outputArr[0] = mode2.indexOf(mode);
+	const outputArr = new Uint8Array(12 + codeArr.length);
+	outputArr[0] = [mode2].indexOf(mode);
 	outputArr.set(new Uint8Array(new Float32Array([sampleRate]).buffer), 1);
-	outputArr.set(codeArr, 5);
+	outputArr.set(codeArr, 12);
 	window.location.hash = '11' + btoa(String.fromCharCode.apply(null, outputArr)).replaceAll('=', '');
 }
