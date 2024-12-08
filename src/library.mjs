@@ -197,7 +197,7 @@ export class Library {
 		const waitElem = headerElem.querySelector('.loading-wait');
 		waitElem.classList.remove('hidden');
 		const libName = containerElem.id.replace('library-', '');
-		const response = await fetch(this.pathLibrary + libName + ('.gz', '.json'));
+		const response = await fetch(this.pathLibrary + libName + ('.gz' || '.json'));
 		const { status } = response;
 		if(status !== 200 && status !== 304) {
 			state.remove('loaded');
