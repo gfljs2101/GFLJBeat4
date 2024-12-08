@@ -94,6 +94,27 @@ class e extends AudioWorkletProcessor {
                     return this.lastByteValue[t] = Math.round(127.5 * (s + 1)), s
                 };
                 break;
+            case "Logmode":
+                this.getValues = (e, t) => (this.lastByteValue[t] = log2(e) * 32 & 255) / 127.5 - 1;
+                break;
+            case "Bitbeat":
+                this.getValues = (e, t) => (this.lastByteValue[t] = ((e & 1) * 127 + 64) & 255) / 127.5 - 1;
+                break;
+            case "2048":
+                this.getValues = (e, t) => (this.lastByteValue[t] = Math.floor(e / 8 & 255)) / 127.5 - 1;
+                break;
+            case "LogHack":
+                this.getValues = (e, t) => (this.lastByteValue[t] = (Math.log2(Math.abs(e)) * (((e) < 0) ? -32 : 32)) & 255) / 127.5 - 1;
+                break;
+            case "LogHack2":
+                this.getValues = (e, t) => (this.lastByteValue[t] = e == 0 ? 128 : (((Math.log2(Math.abs(e)) * (e < 0 ? -16 : 16)) + (e < 0 ? -127 : 128)) & 255)) / 127.5 - 1;
+                break;
+            case "Cbrtmode":
+                this.getValues = (e, t) => (this.lastByteValue[t] = (Math.cbrt(e)) & 255) / 127.5 - 1;
+                break;
+            case "LogHack":
+                this.getValues = (e, t) => (this.lastByteValue[t] = (Math.log10(e) * 32) & 255) / 127.5 - 1;
+                break;
             default:
                 this.getValues = (e, t) => this.lastByteValue[t] = NaN
         }
