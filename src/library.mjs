@@ -1,3 +1,4 @@
+import { ungzip } from 'pako';
 import { formatBytes } from './utils.mjs';
 
 export class Library {
@@ -5,9 +6,17 @@ export class Library {
 		this.cacheParentElem = null;
 		this.cacheTextElem = null;
 		this.pathFiles = './data/songs/';
-		this.pathJSON = './data/json/';
+		this.pathLibrary = './data/library/';
 		this.showAllSongs = false;
 		this.songs = null;
+
+		// Check for admin login
+		const cookie = {};
+		document.cookie.split(';').forEach(el => {
+			const split = el.split('=');
+			cookie[split[0].trim()] = split.slice(1).join('=');
+		});
+		this.isAdmin = cookie.bytebeat_access;
 	}
 	cacheSongs(libArr) {
 		this.songs = new Map();
@@ -85,22 +94,37 @@ export class Library {
 			str += ' ' + mode;
 		}
 		str += ` ${ sampleRate }Hz`;
-		let tagsStr = ('#' + tags.join(' #')).replace(/\s?#(?:256|1k|big)/g, '');
+		const outTags = [];
+		let i = tags.length;
+		while(i--) {
+			switch(tags[i]) {
+			case 'c':
+				if(notAllLib) {
+					continue;
+				}
+				break;
+			case '1k':
+			case '256':
+			case 'big': continue;
+			}
+			outTags.push(tags[i]);
+
+		}
 		if(stereo) {
-			tagsStr += (tagsStr ? ', ' : '') + '#stereo';
+			outTags.push('stereo');
 		}
 		if(drawing) {
 			songObj.drawMode = drawing.mode;
 			songObj.scale = drawing.scale;
-			tagsStr += (tagsStr ? ', ' : '') + '#drawing';
+			outTags.push('drawing');
 		}
-		if(notAllLib) {
-			tagsStr = tagsStr.replace(/\s?#c/, '');
-		}
-		if(tagsStr) {
-			str += ` <span class="code-tags">${ tagsStr }</span>`;
+		if(outTags.length) {
+			str += ` <span class="code-tags">#${ outTags.join(' #') }</span>`;
 		}
 		str += '</span>';
+		if(this.isAdmin) {
+			str += ` <a href="bytebeat.php?editsong_request&hash=${ hash }" target="_blank">Edit</a>`;
+		}
 		if(description) {
 			str += `<div class="code-description">${ description }</div>`;
 		}
@@ -140,7 +164,7 @@ export class Library {
 			str += `<button class="code-text code-text-orig${ codeMin ? ' hidden' : '' }"${
 				sData }>${ this.escapeHTML(code) }</button>`;
 		}
-		return `<div class="entry${ rating ? ' star-' + rating : '' }" data-hash="${ hash }">${ str }</div>`;
+		return `<div class="entry${ rating ? ' star-' + rating : '' }">${ str }</div>`;
 	}
 	initElements() {
 		this.cacheParentElem = document.createElement('div');
@@ -173,7 +197,7 @@ export class Library {
 		const waitElem = headerElem.querySelector('.loading-wait');
 		waitElem.classList.remove('hidden');
 		const libName = containerElem.id.replace('library-', '');
-		const response = await fetch(this.pathJSON + libName + '.json');
+		const response = await fetch(this.pathLibrary + libName + ('.gz' || '.json'));
 		const { status } = response;
 		if(status !== 200 && status !== 304) {
 			state.remove('loaded');
@@ -186,7 +210,7 @@ export class Library {
 			`<label><input type="checkbox" id="library-show-all"${
 				this.showAllSongs ? ' checked' : '' }> Show all songs</label>`;
 		let libHTML = '';
-		const libArr = await response.json();
+		const libArr = JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' }));
 		for(let i = 0, len = libArr.length; i < len; ++i) {
 			libHTML += this.generateEntryHTML(libArr[i], libName);
 		}
@@ -206,8 +230,8 @@ export class Library {
 		if(!this.songs) {
 			elem.insertAdjacentHTML('beforeend',
 				'<svg class="loading-wait"><use xlink:href="#symbol-wait"></use></svg>');
-			const response = await fetch(this.pathJSON + 'all.json');
-			this.cacheSongs(await response.json());
+			const response = await fetch(this.pathLibrary + 'all.gz');
+			this.cacheSongs(JSON.parse(ungzip(await response.arrayBuffer(), { to: 'string' })));
 			elem.lastChild.remove();
 		}
 		parentElem.insertAdjacentHTML('afterend',
