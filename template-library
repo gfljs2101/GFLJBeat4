@@ -1,15 +1,8 @@
 [{"author":"GFLJS2100",
-"songs":[{"hash":"e295af172c127b1f527c823ad0aeaeda",
-"name":"the 42 melody",
-"description":"Separately discovered by several people on irc.",
-"url":"http://viznut.fi/demos/unix/bytebeat_formulas.txt",
-"sampleRate":8000,
-"code":"t*(42&t>>10)",
-"codeLen":12},
-{"hash":"e295af172c127b1f527c823ad0aeaeda",
-"name":"the 42 melody",
-"description":"Separately discovered by several people on irc.",
-"url":"http://viznut.fi/demos/unix/bytebeat_formulas.txt",
-"sampleRate":8000,
-"code":"t*(42&t>>10)",
-"codeLen":12}]}]
+"songs":[
+{
+"name":"Cool 3 channel music (used songs.reduce((a,v)=>a+v%256,0)/songs.length method because dollchan and GFLJBeat3 composers dont have 3 channels)",
+"sampleRate":44100,
+"code":"songs=[((t&t>>12|t&t>>8)&t&t>>4),t&t>>9|t&t>>2,t&t>>1], songs.reduce((a,v)=>a+v%256,0)/songs.length",
+"date": "2024-09-18",
+"codeLen":99}]
