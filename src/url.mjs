@@ -2,21 +2,9 @@ import { deflateRaw, inflateRaw } from 'pako';
 
 export function getCodeFromUrl(hash) {
 	let songData;
-	if(hash.startsWith('#4')) {
-		const dataArr = Uint8Array.from(atob(hash.substring(2)), el => el.charCodeAt());
+	if(hash.startsWith('#v3b64')) {
 		try {
-			songData = {
-				mode: ['Bytebeat', 'Signed Bytebeat', 'Floatbeat', 'Funcbeat', 'Bitbeat', '2048', 'Logmode', 'LogHack', 'LogHack2', 'Cbrtmode', 'Log10mode'][dataArr[0]],
-				sampleRate: new DataView(dataArr.buffer).getFloat32(1, 1),
-				code: inflateRaw(new Uint8Array(dataArr.buffer, 5), { to: 'string' })
-			};
-		} catch(err) {
-			console.error(`Couldn't load data from url: ${ err }`);
-		}
-	} else if(hash.startsWith('#v3b64')) {
-		try {
-			songData = inflateRaw(
-				Uint8Array.from(atob(hash.substring(6)), el => el.charCodeAt()), { to: 'string' });
+			songData = inflateRaw(dataBuffer, { to: 'string' });
 			if(songData.startsWith('{')) {
 				songData = JSON.parse(songData);
 				if(songData.formula) { // XXX: old format
